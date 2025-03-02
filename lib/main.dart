@@ -19,6 +19,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Local App',
+      darkTheme: ThemeData(brightness: Brightness.dark),
+      theme: ThemeData(brightness: Brightness.dark),
       home: MainHomeScreen(),
       // home: Scaffold(
       //   appBar: AppBar(title: Text('Local App')),

@@ -102,15 +102,49 @@ class DatabaseService {
     return tasks;
   }
 
-  // Future<List<ShopingListModal>?> getShopingList(bool isCompleted) async {
-  //   final db = await database;
-  //   final List<Map<String, dynamic>> myTaskData = await db.query(
-  //     SHOPING_LIST_TABLE_NAME,
-  //   );
-  //   List<ShopingListModal> tasks =
-  //       myTaskData.map((e) => ShopingListModal.fromMap(e, false)).toList();
-  //   return tasks;
-  // }
+  Future<void> deleteItem(int id) async {
+    final db = await database;
+    await db.delete(SHOPING_LIST_ITEM, where: 'id =?', whereArgs: [id]);
+  }
+
+  Future<void> updateItemInformation(ShopingLisItemtModal item) async {
+    final db = await database;
+    await db.update(
+      SHOPING_LIST_ITEM_NAME,
+      {
+        SHOPING_LIST_ITEM_NAME: item.itemName,
+        SHOPING_LIST_ITEM_QUANTITY: item.itemQuantity,
+        SHOPING_LIST_ITEM_STATE: item.state,
+        SHOPING_LIST_ITEM_PRICE: item.price,
+      },
+      where: 'id =?',
+      whereArgs: [item.id],
+    );
+  }
+
+  Future<void> updateShoplist(ShopingListModal item) async {
+    final db = await database;
+    await db.update(
+      SHOPING_LIST_TABLE_NAME,
+      {
+        SHOPING_LIST_NAME: item.shopingListName,
+        SHOPING_LIST_INFORMATION: item.shopingListInformation,
+      },
+      where: 'id =?',
+      whereArgs: [item.id],
+    );
+  }
+
+  Future<void> deleteShopList(int id) async {
+    final db = await database;
+    await db.delete(SHOPING_LIST_TABLE_NAME, where: 'id =?', whereArgs: [id]);
+    await db.delete(
+      SHOPING_LIST_ITEM,
+      where: '$SHOPING_LIST_TABLE_NAME =?',
+      whereArgs: [id],
+    );
+  }
+
   Future<List<ShopingListModal>?> getShopingList(bool isCompleted) async {
     final db = await database;
     final List<Map<String, dynamic>> myTaskData = await db.query(

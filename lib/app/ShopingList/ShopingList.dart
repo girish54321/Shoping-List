@@ -20,6 +20,16 @@ class _ShopingListState extends State<ShopingList> {
     return FutureBuilder(
       future: _databaseService.getShopingList(widget.isCompleted),
       builder: (context, snapShot) {
+        if (snapShot.data?.isEmpty ?? false) {
+          return Center(
+            child: Text(
+              !widget.isCompleted
+                  ? "You Past shoping list will show here"
+                  : "Create your shoping List",
+              style: TextStyle(fontSize: 22),
+            ),
+          );
+        }
         return ListView.builder(
           itemCount: snapShot.data?.length ?? 0,
           itemBuilder: (context, index) {

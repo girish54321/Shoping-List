@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:local_app/app/AddItems/AddItemsScreen.dart';
+import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
 import 'package:local_app/app/DataBase/shop-list-database.dart';
+import 'package:local_app/helper.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class AddShopingItem extends StatefulWidget {
@@ -15,7 +18,7 @@ class _AddShopingItemState extends State<AddShopingItem>
   late TabController _tabController;
   final DatabaseService _databaseService = DatabaseService.INSTANCE;
 
-  TextEditingController? itemName;
+  TextEditingController? itemName = TextEditingController();
 
   void _addShopingItem(String itemName) {
     var item = ShopingLisItemtModal(
@@ -75,7 +78,8 @@ class _AddShopingItemState extends State<AddShopingItem>
                   item.itemQuantity != null
                       ? Text("Quantity: ${item.itemQuantity?.toString()}")
                       : null,
-              trailing: Checkbox(
+              trailing: openPopUpMenu(item),
+              leading: Checkbox(
                 value: item.state == 1,
                 onChanged: (val) {
                   _databaseService.completeShopingListItem(
@@ -92,11 +96,73 @@ class _AddShopingItemState extends State<AddShopingItem>
     );
   }
 
+  Widget openPopUpMenu(ShopingLisItemtModal? item) {
+    return PopupMenuButton<String>(
+      onSelected: (val) {
+        if (val == "edit") {
+          if (item != null) {
+            Helper().goToPage(
+              context: context,
+              child: AddItemsScreen(
+                shopListId: widget.shopingList.id ?? 0,
+                shopListItem: item,
+              ),
+            );
+          } else {
+            Helper().goToPage(
+              context: context,
+              child: Createshopinglist(updateItem: widget.shopingList),
+            );
+          }
+        }
+        if (val == "delete") {
+          if (item != null) {
+            _databaseService.deleteItem(item.id ?? 0);
+          } else {
+            _databaseService.deleteShopList(widget.shopingList.id ?? 0);
+            Navigator.of(context).pop();
+          }
+          setState(() {});
+          return;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          AppMenuItem(
+            "edit",
+            const ListTile(leading: Icon(Icons.edit), title: Text("Edit")),
+          ),
+          AppMenuItem(
+            "delete",
+            const ListTile(
+              leading: Icon(Icons.delete, color: Colors.red),
+              title: Text("Delete"),
+            ),
+          ),
+        ].map((AppMenuItem choice) {
+          return PopupMenuItem<String>(value: choice.id, child: choice.widget);
+        }).toList();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Shopping Item'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Helper().goToPage(
+                context: context,
+                child: AddItemsScreen(shopListId: widget.shopingList.id ?? 0),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),
+          openPopUpMenu(null),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[

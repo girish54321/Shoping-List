@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:local_app/app/DataBase/config.dart';
 
 class ShopingListModal {
@@ -52,4 +53,10 @@ class ShopingLisItemtModal {
       price: map[SHOPING_LIST_ITEM_PRICE] as int?,
     );
   }
+}
+
+class AppMenuItem {
+  final String id;
+  final Widget widget;
+  AppMenuItem(this.id, this.widget);
 }

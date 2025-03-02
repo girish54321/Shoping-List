@@ -5,7 +5,8 @@ import 'package:local_app/appInputText.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class Createshopinglist extends StatefulWidget {
-  const Createshopinglist({super.key});
+  final ShopingListModal? updateItem;
+  const Createshopinglist({super.key, this.updateItem});
 
   @override
   State<Createshopinglist> createState() => _CreateshopinglistState();
@@ -35,6 +36,42 @@ class _CreateshopinglistState extends State<Createshopinglist> {
     Navigator.of(context).pop();
   }
 
+  void updateShopingList() async {
+    if (nameController.text.isEmpty || infoController.text.isEmpty) {
+      return;
+    }
+    if (widget.updateItem == null) {
+      return;
+    }
+
+    final ShopingListModal updatedShoppingList = ShopingListModal(
+      id: widget.updateItem?.id,
+      shopingListName: nameController.text,
+      shopingListInformation: infoController.text,
+    );
+
+    _databaseService.updateShoplist(updatedShoppingList);
+
+    nameController.clear();
+    infoController.clear();
+
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void initState() {
+    nameController.text = widget.updateItem?.shopingListName ?? "";
+    infoController.text = widget.updateItem?.shopingListInformation ?? "";
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    infoController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,14 +80,14 @@ class _CreateshopinglistState extends State<Createshopinglist> {
         padding: const EdgeInsets.symmetric(horizontal: 22.0),
         children: [
           InputText(
-            textInputType: TextInputType.none,
+            textInputType: TextInputType.text,
             textEditingController: nameController,
             password: false,
             hint: "Name",
             onChnaged: (text) {},
           ),
           InputText(
-            textInputType: TextInputType.none,
+            textInputType: TextInputType.text,
             textEditingController: infoController,
             password: false,
             hint: "Information",
@@ -58,7 +95,13 @@ class _CreateshopinglistState extends State<Createshopinglist> {
           ),
           const SizedBox(height: 14),
           AppButton(
-            function: createList,
+            function: () {
+              if (widget.updateItem != null) {
+                updateShopingList();
+              } else {
+                createList();
+              }
+            },
             child: const Center(
               child: Text(
                 "Create",
