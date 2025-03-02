@@ -56,8 +56,10 @@ class _AddShopingItemState extends State<AddShopingItem>
           itemCount: (snapShot.data?.length ?? 0) + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
+              if (isCompletedList) {
+                return SizedBox();
+              }
               return ListTile(
-                trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
                 title: TextField(
                   controller: itemName,
                   textInputAction: TextInputAction.go,
@@ -76,7 +78,9 @@ class _AddShopingItemState extends State<AddShopingItem>
               title: Text(item.itemName ?? "Nice "),
               subtitle:
                   item.itemQuantity != null
-                      ? Text("Quantity: ${item.itemQuantity?.toString()}")
+                      ? Text(
+                        "Quantity: ${item.itemQuantity?.toString()} / Price: ${item.price}",
+                      )
                       : null,
               trailing: openPopUpMenu(item),
               leading: Checkbox(

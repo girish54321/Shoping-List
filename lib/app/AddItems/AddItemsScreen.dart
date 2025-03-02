@@ -37,7 +37,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
       ),
       state: widget.shopListItem?.state ?? 0,
     );
-    _databaseService.updateItemInformation(item);
+    _databaseService.updateItem(item);
     setState(() {});
     Navigator.of(context).pop();
   }

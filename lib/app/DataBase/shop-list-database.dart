@@ -107,10 +107,10 @@ class DatabaseService {
     await db.delete(SHOPING_LIST_ITEM, where: 'id =?', whereArgs: [id]);
   }
 
-  Future<void> updateItemInformation(ShopingLisItemtModal item) async {
+  Future<void> updateItem(ShopingLisItemtModal item) async {
     final db = await database;
     await db.update(
-      SHOPING_LIST_ITEM_NAME,
+      SHOPING_LIST_ITEM,
       {
         SHOPING_LIST_ITEM_NAME: item.itemName,
         SHOPING_LIST_ITEM_QUANTITY: item.itemQuantity,

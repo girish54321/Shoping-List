@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:local_app/app/SettingsScreen.dart';
 import 'package:local_app/app/ShopingList/ShopingList.dart';
-import 'package:local_app/helper.dart';
 
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
@@ -26,17 +24,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shoping List'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Helper().goToPage(context: context, child: SettingsScreen());
-            },
-            icon: Icon(Icons.settings),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Shoping List')),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
