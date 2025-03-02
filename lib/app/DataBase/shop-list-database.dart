@@ -102,42 +102,42 @@ class DatabaseService {
     return tasks;
   }
 
-  Future<List<ShopingListModal>?> getShopingList() async {
-    final db = await database;
-    final List<Map<String, dynamic>> myTaskData = await db.query(
-      SHOPING_LIST_TABLE_NAME,
-    );
-    List<ShopingListModal> tasks =
-        myTaskData.map((e) => ShopingListModal.fromMap(e, false)).toList();
-    return tasks;
-  }
   // Future<List<ShopingListModal>?> getShopingList(bool isCompleted) async {
   //   final db = await database;
   //   final List<Map<String, dynamic>> myTaskData = await db.query(
   //     SHOPING_LIST_TABLE_NAME,
   //   );
-
-  //   if (myTaskData.isNotEmpty) {
-  //     List<Future<ShopingListModal>> futureTasks =
-  //         myTaskData.map((e) async {
-  //           var isNotCompleted = await getShopingListItem(e['id'], false);
-  //           if (isNotCompleted!.isNotEmpty) {
-  //             return ShopingListModal.fromMap(e, false);
-  //           } else {
-  //             return ShopingListModal.fromMap(e, true);
-  //           }
-  //         }).toList(); // Convert to List<Future<ShopingListModal>>
-
-  //     List<ShopingListModal> tasks = await Future.wait(
-  //       futureTasks,
-  //     ); // Resolve the futures
-  //     if (isCompleted) {
-  //       return tasks.where((i) => i.isCompleted ?? false).toList();
-  //     } else {
-  //       return tasks.where((i) => i.isCompleted ?? true).toList();
-  //     }
-  //   } else {
-  //     return [];
-  //   }
+  //   List<ShopingListModal> tasks =
+  //       myTaskData.map((e) => ShopingListModal.fromMap(e, false)).toList();
+  //   return tasks;
   // }
+  Future<List<ShopingListModal>?> getShopingList(bool isCompleted) async {
+    final db = await database;
+    final List<Map<String, dynamic>> myTaskData = await db.query(
+      SHOPING_LIST_TABLE_NAME,
+    );
+
+    if (myTaskData.isNotEmpty) {
+      List<ShopingListModal> tasks = [];
+      for (var e in myTaskData) {
+        // Use a for loop instead of map
+        var isNotCompleted = await getShopingListItem(e['id'], false);
+        if (isNotCompleted!.isNotEmpty) {
+          tasks.add(ShopingListModal.fromMap(e, false));
+        } else {
+          tasks.add(ShopingListModal.fromMap(e, true));
+        }
+      }
+
+      List<ShopingListModal> filteredList = [];
+      if (isCompleted) {
+        filteredList = tasks.where((task) => !task.isCompleted!).toList();
+      } else {
+        filteredList = tasks.where((task) => task.isCompleted!).toList();
+      }
+      return filteredList;
+    } else {
+      return [];
+    }
+  }
 }

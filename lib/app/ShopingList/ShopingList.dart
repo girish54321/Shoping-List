@@ -6,7 +6,8 @@ import 'package:local_app/helper.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class ShopingList extends StatefulWidget {
-  const ShopingList({super.key});
+  final bool isCompleted;
+  const ShopingList({super.key, required this.isCompleted});
 
   @override
   State<ShopingList> createState() => _ShopingListState();
@@ -17,13 +18,17 @@ class _ShopingListState extends State<ShopingList> {
 
   Widget listOfTasks() {
     return FutureBuilder(
-      future: _databaseService.getShopingList(),
+      future: _databaseService.getShopingList(widget.isCompleted),
       builder: (context, snapShot) {
         return ListView.builder(
           itemCount: snapShot.data?.length ?? 0,
           itemBuilder: (context, index) {
             ShopingListModal task = snapShot.data![index];
             return ListTile(
+              leading: Icon(
+                Icons.checklist_rounded,
+                color: !widget.isCompleted ? Colors.green : Colors.orange,
+              ),
               onTap: () {
                 Helper().goToPage(
                   context: context,
@@ -32,12 +37,6 @@ class _ShopingListState extends State<ShopingList> {
               },
               title: Text(task.shopingListName ?? "Nice "),
               subtitle: Text(task.shopingListInformation ?? "Nice "),
-              // trailing: Checkbox(
-              //   value: task.isCompleted,
-              //   onChanged: (val) {
-              //     setState(() {});
-              //   },
-              // ),
             );
           },
         );
