@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_app/app/AddShopingItem/AddShopingItemScreen.dart';
 import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
 import 'package:local_app/app/DataBase/shop-list-database.dart';
 import 'package:local_app/helper.dart';
@@ -23,20 +24,20 @@ class _ShopingListState extends State<ShopingList> {
           itemBuilder: (context, index) {
             ShopingListModal task = snapShot.data![index];
             return ListTile(
+              onTap: () {
+                Helper().goToPage(
+                  context: context,
+                  child: AddShopingItem(shopingList: task),
+                );
+              },
               title: Text(task.shopingListName ?? "Nice "),
               subtitle: Text(task.shopingListInformation ?? "Nice "),
-              trailing: Checkbox(
-                value: task.state == 1,
-                onChanged: (val) {
-                  // _databaseService.updateTask(
-                  //   task.id as int,
-                  //   task.task ?? "",
-                  //   task.information ?? "",
-                  //   val == true ? 1 : 0,
-                  // );
-                  setState(() {});
-                },
-              ),
+              // trailing: Checkbox(
+              //   value: task.isCompleted,
+              //   onChanged: (val) {
+              //     setState(() {});
+              //   },
+              // ),
             );
           },
         );
