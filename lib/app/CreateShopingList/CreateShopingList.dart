@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:local_app/app/DataBase/shop-list-database.dart';
-import 'package:local_app/app/buttons.dart';
-import 'package:local_app/appInputText.dart';
+import 'package:local_app/DataBase/shop-list-database.dart';
+import 'package:local_app/Helper/buttons.dart';
+import 'package:local_app/Helper/appInputText.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class Createshopinglist extends StatefulWidget {
-  final ShopingListModal? updateItem;
+  final ShoppingListModel? updateItem;
   const Createshopinglist({super.key, this.updateItem});
 
   @override
@@ -16,19 +16,19 @@ class _CreateshopinglistState extends State<Createshopinglist> {
   TextEditingController nameController = TextEditingController();
   TextEditingController infoController = TextEditingController();
 
-  final DatabaseService _databaseService = DatabaseService.INSTANCE;
+  final DatabaseService _databaseService = DatabaseService.databaseService;
 
   void createList() async {
     if (nameController.text.isEmpty || infoController.text.isEmpty) {
       return;
     }
 
-    final ShopingListModal shoppingList = ShopingListModal(
-      shopingListName: nameController.text,
-      shopingListInformation: infoController.text,
+    final ShoppingListModel shoppingList = ShoppingListModel(
+      title: nameController.text,
+      description: infoController.text,
     );
 
-    _databaseService.addShopingList(shoppingList);
+    _databaseService.createShopingList(shoppingList);
 
     nameController.clear();
     infoController.clear();
@@ -44,10 +44,10 @@ class _CreateshopinglistState extends State<Createshopinglist> {
       return;
     }
 
-    final ShopingListModal updatedShoppingList = ShopingListModal(
+    final ShoppingListModel updatedShoppingList = ShoppingListModel(
       id: widget.updateItem?.id,
-      shopingListName: nameController.text,
-      shopingListInformation: infoController.text,
+      title: nameController.text,
+      description: infoController.text,
     );
 
     _databaseService.updateShoplist(updatedShoppingList);
@@ -60,8 +60,8 @@ class _CreateshopinglistState extends State<Createshopinglist> {
 
   @override
   void initState() {
-    nameController.text = widget.updateItem?.shopingListName ?? "";
-    infoController.text = widget.updateItem?.shopingListInformation ?? "";
+    nameController.text = widget.updateItem?.title ?? "";
+    infoController.text = widget.updateItem?.description ?? "";
     super.initState();
   }
 

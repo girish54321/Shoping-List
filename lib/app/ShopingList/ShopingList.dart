@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:local_app/app/AddShopingItem/AddShopingItemScreen.dart';
 import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
-import 'package:local_app/app/DataBase/shop-list-database.dart';
-import 'package:local_app/helper.dart';
+import 'package:local_app/DataBase/shop-list-database.dart';
+import 'package:local_app/Helper/helper.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class ShopingList extends StatefulWidget {
@@ -14,7 +14,7 @@ class ShopingList extends StatefulWidget {
 }
 
 class _ShopingListState extends State<ShopingList> {
-  final DatabaseService _databaseService = DatabaseService.INSTANCE;
+  final DatabaseService _databaseService = DatabaseService.databaseService;
 
   Widget listOfTasks() {
     return FutureBuilder(
@@ -33,7 +33,7 @@ class _ShopingListState extends State<ShopingList> {
         return ListView.builder(
           itemCount: snapShot.data?.length ?? 0,
           itemBuilder: (context, index) {
-            ShopingListModal task = snapShot.data![index];
+            ShoppingListModel task = snapShot.data![index];
             return ListTile(
               leading: Icon(
                 Icons.checklist_rounded,
@@ -45,8 +45,8 @@ class _ShopingListState extends State<ShopingList> {
                   child: AddShopingItem(shopingList: task),
                 );
               },
-              title: Text(task.shopingListName ?? "Nice "),
-              subtitle: Text(task.shopingListInformation ?? "Nice "),
+              title: Text(task.title ?? ""),
+              subtitle: Text(task.description ?? ""),
             );
           },
         );

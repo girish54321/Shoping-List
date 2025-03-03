@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:local_app/app/AddItems/AddItemsScreen.dart';
 import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
-import 'package:local_app/app/DataBase/shop-list-database.dart';
-import 'package:local_app/helper.dart';
+import 'package:local_app/DataBase/shop-list-database.dart';
+import 'package:local_app/Helper/helper.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class AddShopingItem extends StatefulWidget {
-  final ShopingListModal shopingList;
+  final ShoppingListModel shopingList;
   const AddShopingItem({super.key, required this.shopingList});
 
   @override
@@ -16,19 +16,19 @@ class AddShopingItem extends StatefulWidget {
 class _AddShopingItemState extends State<AddShopingItem>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final DatabaseService _databaseService = DatabaseService.INSTANCE;
+  final DatabaseService _databaseService = DatabaseService.databaseService;
 
   TextEditingController? itemName = TextEditingController();
 
   void _addShopingItem(String itemName) {
-    var item = ShopingLisItemtModal(
+    var item = ShoppingListItemModel(
       id: widget.shopingList.id,
-      itemName: itemName,
-      itemQuantity: 1,
+      name: itemName,
+      quantity: 1,
       price: 0,
-      state: 0,
+      status: 0,
     );
-    _databaseService.addShopingListItem(item);
+    _databaseService.addItemToShopingList(item);
     setState(() {});
   }
 
@@ -73,18 +73,18 @@ class _AddShopingItemState extends State<AddShopingItem>
                 ),
               );
             }
-            ShopingLisItemtModal item = snapShot.data![index - 1];
+            ShoppingListItemModel item = snapShot.data![index - 1];
             return ListTile(
-              title: Text(item.itemName ?? "Nice "),
+              title: Text(item.name ?? "Nice "),
               subtitle:
-                  item.itemQuantity != null
+                  item.quantity != null
                       ? Text(
-                        "Quantity: ${item.itemQuantity?.toString()} / Price: ${item.price}",
+                        "Quantity: ${item.quantity?.toString()} / Price: ${item.price}",
                       )
                       : null,
               trailing: openPopUpMenu(item),
               leading: Checkbox(
-                value: item.state == 1,
+                value: item.status == 1,
                 onChanged: (val) {
                   _databaseService.completeShopingListItem(
                     item,
@@ -100,7 +100,7 @@ class _AddShopingItemState extends State<AddShopingItem>
     );
   }
 
-  Widget openPopUpMenu(ShopingLisItemtModal? item) {
+  Widget openPopUpMenu(ShoppingListItemModel? item) {
     return PopupMenuButton<String>(
       onSelected: (val) {
         if (val == "edit") {
@@ -182,7 +182,7 @@ class _AddShopingItemState extends State<AddShopingItem>
       ),
       bottomNavigationBar: SafeArea(
         child: ListTile(
-          title: Text(widget.shopingList.shopingListName ?? ""),
+          title: Text(widget.shopingList.title ?? ""),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

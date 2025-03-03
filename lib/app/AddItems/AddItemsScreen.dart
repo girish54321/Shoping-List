@@ -1,13 +1,13 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:local_app/app/DataBase/shop-list-database.dart';
-import 'package:local_app/app/buttons.dart';
-import 'package:local_app/appInputText.dart';
+import 'package:local_app/DataBase/shop-list-database.dart';
+import 'package:local_app/Helper/buttons.dart';
+import 'package:local_app/Helper/appInputText.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class AddItemsScreen extends StatefulWidget {
   final int shopListId;
-  final ShopingLisItemtModal? shopListItem;
+  final ShoppingListItemModel? shopListItem;
   const AddItemsScreen({
     super.key,
     required this.shopListId,
@@ -23,19 +23,19 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   TextEditingController? quantity = TextEditingController();
   TextEditingController? price = TextEditingController();
 
-  final DatabaseService _databaseService = DatabaseService.INSTANCE;
+  final DatabaseService _databaseService = DatabaseService.databaseService;
 
   void updateItem() {
-    var item = ShopingLisItemtModal(
+    var item = ShoppingListItemModel(
       id: widget.shopListItem?.id ?? 0,
-      itemName: itemName?.text ?? widget.shopListItem?.itemName,
-      itemQuantity: int.parse(
-        quantity?.text ?? widget.shopListItem?.itemQuantity.toString() ?? "0",
+      name: itemName?.text ?? widget.shopListItem?.name,
+      quantity: int.parse(
+        quantity?.text ?? widget.shopListItem?.quantity.toString() ?? "0",
       ),
       price: int.parse(
         price?.text ?? widget.shopListItem?.price.toString() ?? "0",
       ),
-      state: widget.shopListItem?.state ?? 0,
+      status: widget.shopListItem?.status ?? 0,
     );
     _databaseService.updateItem(item);
     setState(() {});
@@ -43,22 +43,22 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   }
 
   void _addShopingItem() {
-    var item = ShopingLisItemtModal(
+    var item = ShoppingListItemModel(
       id: widget.shopListId,
-      itemName: itemName?.text,
-      itemQuantity: int.parse(quantity?.text ?? "0"),
+      name: itemName?.text,
+      quantity: int.parse(quantity?.text ?? "0"),
       price: int.parse(price?.text ?? "0"),
-      state: 0,
+      status: 0,
     );
-    _databaseService.addShopingListItem(item);
+    _databaseService.addItemToShopingList(item);
     setState(() {});
     Navigator.of(context).pop();
   }
 
   @override
   void initState() {
-    itemName?.text = widget.shopListItem?.itemName ?? "";
-    quantity?.text = widget.shopListItem?.itemQuantity?.toString() ?? "";
+    itemName?.text = widget.shopListItem?.name ?? "";
+    quantity?.text = widget.shopListItem?.quantity?.toString() ?? "";
     price?.text = widget.shopListItem?.price?.toString() ?? "";
     super.initState();
   }
