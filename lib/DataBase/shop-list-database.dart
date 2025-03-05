@@ -96,6 +96,7 @@ class DatabaseService {
       );
       List<ShoppingListItemModel> tasks =
           myTaskData.map((e) => ShoppingListItemModel.fromMap(e)).toList();
+
       return tasks;
     }
     final List<Map<String, dynamic>> myTaskData = await db.query(
@@ -105,6 +106,7 @@ class DatabaseService {
     );
     List<ShoppingListItemModel> tasks =
         myTaskData.map((e) => ShoppingListItemModel.fromMap(e)).toList();
+
     return tasks;
   }
 
