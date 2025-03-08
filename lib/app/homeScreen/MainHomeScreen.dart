@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:get/state_manager.dart';
 import 'package:local_app/app/ShopingList/ShopingList.dart';
+import 'package:local_app/app/getx/ShopingListController.dart';
 
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
@@ -9,11 +12,8 @@ class MainHomeScreen extends StatefulWidget {
 }
 
 class _MainHomeScreenState extends State<MainHomeScreen> {
+  final ShopingListController globalController = Get.find();
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    ShopingList(isCompleted: true),
-    ShopingList(isCompleted: false),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -25,7 +25,20 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Shoping List')),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body:
+          _selectedIndex == 0
+              ? Obx(
+                (() => ShopingList(
+                  isCompleted: false,
+                  shoppingList: globalController.inprogressShopingList.value,
+                )),
+              )
+              : Obx(
+                (() => ShopingList(
+                  isCompleted: true,
+                  shoppingList: globalController.completedShopingList.value,
+                )),
+              ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
