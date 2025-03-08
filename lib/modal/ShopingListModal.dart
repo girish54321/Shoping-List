@@ -1,55 +1,64 @@
-import 'package:local_app/app/DataBase/config.dart';
+import 'package:flutter/material.dart';
+import 'package:local_app/DataBase/config.dart';
 
-class ShopingListModal {
+class ShoppingListModel {
   final int? id;
-  final String? shopingListName;
-  final String? shopingListInformation;
-  final int? state;
-  final bool? isCompleted;
+  final String? title;
+  final String? description;
+  final int? status;
+  final bool isCompleted;
 
-  ShopingListModal({
+  ShoppingListModel({
     this.id,
-    this.shopingListName,
-    this.shopingListInformation,
-    this.state,
-    this.isCompleted,
+    this.title,
+    this.description,
+    this.status,
+    this.isCompleted = false,
   });
 
-  // Optional: Add a factory method to create a Task from a Map
-  factory ShopingListModal.fromMap(Map<String, dynamic> map, isCompleted) {
-    return ShopingListModal(
+  factory ShoppingListModel.fromMap(
+    Map<String, dynamic> map,
+    bool isCompleted,
+  ) {
+    return ShoppingListModel(
       id: map['id'] as int?,
-      shopingListName: map[SHOPING_LIST_NAME] as String?,
-      shopingListInformation: map[SHOPING_LIST_INFORMATION] as String?,
-      state: map[SHOPING_LIST_STATE] as int?,
+      title: map[shoppingListTitle] as String?,
+      description: map[shoppingListDescription] as String?,
+      status: map[shoppingListStatus] as int?,
       isCompleted: isCompleted,
     );
   }
 }
 
-class ShopingLisItemtModal {
+class ShoppingListItemModel {
   final int? id;
-  final String? itemName;
-  final int? itemQuantity;
-  final int? state;
+  final String? name;
+  final int? quantity;
+  final int? status;
   final int? price;
 
-  ShopingLisItemtModal({
+  ShoppingListItemModel({
     this.id,
-    this.itemName,
-    this.itemQuantity,
-    this.state,
+    this.name,
+    this.quantity,
+    this.status,
     this.price,
   });
 
-  // Optional: Add a factory method to create a Task from a Map
-  factory ShopingLisItemtModal.fromMap(Map<String, dynamic> map) {
-    return ShopingLisItemtModal(
+  factory ShoppingListItemModel.fromMap(Map<String, dynamic> map) {
+    return ShoppingListItemModel(
       id: map['id'] as int?,
-      itemName: map[SHOPING_LIST_ITEM_NAME] as String?,
-      itemQuantity: map[SHOPING_LIST_ITEM_QUANTITY] as int?,
-      state: map[SHOPING_LIST_ITEM_STATE] as int?,
-      price: map[SHOPING_LIST_ITEM_PRICE] as int?,
+      name: map[itemColumnName] as String?,
+      quantity: map[itemColumnQuantity] as int?,
+      status: map[itemColumnStatus] as int?,
+      price: map[itemColumnPrice] as int?,
     );
   }
+}
+
+class AppMenuItem {
+  final String id;
+  final Widget widget;
+
+  AppMenuItem(this.id, this.widget);
 }

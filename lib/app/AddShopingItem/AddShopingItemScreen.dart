@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:local_app/app/DataBase/shop-list-database.dart';
+import 'package:local_app/app/AddItems/AddItemsScreen.dart';
+import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
+import 'package:local_app/DataBase/shop-list-database.dart';
+import 'package:local_app/Helper/helper.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class AddShopingItem extends StatefulWidget {
-  final ShopingListModal shopingList;
+  final ShoppingListModel shopingList;
   const AddShopingItem({super.key, required this.shopingList});
 
   @override
@@ -13,19 +16,19 @@ class AddShopingItem extends StatefulWidget {
 class _AddShopingItemState extends State<AddShopingItem>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final DatabaseService _databaseService = DatabaseService.INSTANCE;
+  final DatabaseService _databaseService = DatabaseService.databaseService;
 
-  TextEditingController? itemName;
+  TextEditingController? itemName = TextEditingController();
 
   void _addShopingItem(String itemName) {
-    var item = ShopingLisItemtModal(
+    var item = ShoppingListItemModel(
       id: widget.shopingList.id,
-      itemName: itemName,
-      itemQuantity: 1,
+      name: itemName,
+      quantity: 1,
       price: 0,
-      state: 0,
+      status: 0,
     );
-    _databaseService.addShopingListItem(item);
+    _databaseService.addItemToShopingList(item);
     setState(() {});
   }
 
@@ -53,8 +56,10 @@ class _AddShopingItemState extends State<AddShopingItem>
           itemCount: (snapShot.data?.length ?? 0) + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
+              if (isCompletedList) {
+                return SizedBox();
+              }
               return ListTile(
-                trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
                 title: TextField(
                   controller: itemName,
                   textInputAction: TextInputAction.go,
@@ -68,15 +73,18 @@ class _AddShopingItemState extends State<AddShopingItem>
                 ),
               );
             }
-            ShopingLisItemtModal item = snapShot.data![index - 1];
+            ShoppingListItemModel item = snapShot.data![index - 1];
             return ListTile(
-              title: Text(item.itemName ?? "Nice "),
+              title: Text(item.name ?? "Nice "),
               subtitle:
-                  item.itemQuantity != null
-                      ? Text("Quantity: ${item.itemQuantity?.toString()}")
+                  item.quantity != null
+                      ? Text(
+                        "Quantity: ${item.quantity?.toString()} / Price: ${item.price}",
+                      )
                       : null,
-              trailing: Checkbox(
-                value: item.state == 1,
+              trailing: openPopUpMenu(item),
+              leading: Checkbox(
+                value: item.status == 1,
                 onChanged: (val) {
                   _databaseService.completeShopingListItem(
                     item,
@@ -92,11 +100,73 @@ class _AddShopingItemState extends State<AddShopingItem>
     );
   }
 
+  Widget openPopUpMenu(ShoppingListItemModel? item) {
+    return PopupMenuButton<String>(
+      onSelected: (val) {
+        if (val == "edit") {
+          if (item != null) {
+            Helper().goToPage(
+              context: context,
+              child: AddItemsScreen(
+                shopListId: widget.shopingList.id ?? 0,
+                shopListItem: item,
+              ),
+            );
+          } else {
+            Helper().goToPage(
+              context: context,
+              child: Createshopinglist(updateItem: widget.shopingList),
+            );
+          }
+        }
+        if (val == "delete") {
+          if (item != null) {
+            _databaseService.deleteItem(item.id ?? 0);
+          } else {
+            _databaseService.deleteShopList(widget.shopingList.id ?? 0);
+            Navigator.of(context).pop();
+          }
+          setState(() {});
+          return;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          AppMenuItem(
+            "edit",
+            const ListTile(leading: Icon(Icons.edit), title: Text("Edit")),
+          ),
+          AppMenuItem(
+            "delete",
+            const ListTile(
+              leading: Icon(Icons.delete, color: Colors.red),
+              title: Text("Delete"),
+            ),
+          ),
+        ].map((AppMenuItem choice) {
+          return PopupMenuItem<String>(value: choice.id, child: choice.widget);
+        }).toList();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Shopping Item'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Helper().goToPage(
+                context: context,
+                child: AddItemsScreen(shopListId: widget.shopingList.id ?? 0),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),
+          openPopUpMenu(null),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
@@ -112,7 +182,7 @@ class _AddShopingItemState extends State<AddShopingItem>
       ),
       bottomNavigationBar: SafeArea(
         child: ListTile(
-          title: Text(widget.shopingList.shopingListName ?? ""),
+          title: Text(widget.shopingList.title ?? ""),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
