@@ -12,11 +12,11 @@ class LocaleWidgetPair {
 class SettingController extends GetxController {
   RxBool isDark = false.obs;
   GetStorage box = GetStorage();
-
   @override
   void onReady() {
-    super.onReady();
+    print("do you");
     loadThem();
+    super.onReady();
   }
 
   //* Local Settings
@@ -31,12 +31,15 @@ class SettingController extends GetxController {
         Get.changeThemeMode(ThemeMode.light);
       }
     } else {
+      print("No Them car");
       isDark.value = false;
+      saveThemSetting(false);
       Get.changeThemeMode(ThemeMode.light);
     }
   }
 
   void saveThemSetting(bool value) {
+    print("Save the team");
     box.write("darkThem", value);
   }
 
