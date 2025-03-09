@@ -1,8 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:local_app/DataBase/shop-list-database.dart';
 import 'package:local_app/Helper/buttons.dart';
 import 'package:local_app/Helper/appInputText.dart';
+import 'package:local_app/app/getx/ShopingListController.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class AddItemsScreen extends StatefulWidget {
@@ -22,8 +24,14 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   TextEditingController? itemName = TextEditingController();
   TextEditingController? quantity = TextEditingController();
   TextEditingController? price = TextEditingController();
+  final ShopingListController shopingListController = Get.find();
 
   final DatabaseService _databaseService = DatabaseService.databaseService;
+
+  void updateItems() {
+    shopingListController.getShopingListItemCompleted();
+    shopingListController.getShopingListItemInProgress();
+  }
 
   void updateItem() {
     var item = ShoppingListItemModel(
@@ -38,6 +46,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
       status: widget.shopListItem?.status ?? 0,
     );
     _databaseService.updateItem(item);
+    updateItems();
     setState(() {});
     Navigator.of(context).pop();
   }
@@ -51,6 +60,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
       status: 0,
     );
     _databaseService.addItemToShopingList(item);
+    updateItems();
     setState(() {});
     Navigator.of(context).pop();
   }

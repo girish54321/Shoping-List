@@ -178,9 +178,9 @@ class DatabaseService {
 
       List<ShoppingListModel> filteredList = [];
       if (isCompleted) {
-        filteredList = tasks.where((task) => !task.isCompleted).toList();
-      } else {
         filteredList = tasks.where((task) => task.isCompleted).toList();
+      } else {
+        filteredList = tasks.where((task) => !task.isCompleted).toList();
       }
       return filteredList;
     } else {

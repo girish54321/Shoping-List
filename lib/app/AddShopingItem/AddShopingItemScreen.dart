@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_instance/get_instance.dart';
+import 'package:get/state_manager.dart';
 import 'package:local_app/app/AddItems/AddItemsScreen.dart';
 import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
 import 'package:local_app/DataBase/shop-list-database.dart';
 import 'package:local_app/Helper/helper.dart';
+import 'package:local_app/app/getx/ShopingListController.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class AddShopingItem extends StatefulWidget {
@@ -16,7 +19,8 @@ class AddShopingItem extends StatefulWidget {
 class _AddShopingItemState extends State<AddShopingItem>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final DatabaseService _databaseService = DatabaseService.databaseService;
+  final DatabaseService databaseService = DatabaseService.databaseService;
+  final ShopingListController shopingListController = Get.find();
 
   TextEditingController? itemName = TextEditingController();
 
@@ -28,14 +32,21 @@ class _AddShopingItemState extends State<AddShopingItem>
       price: 0,
       status: 0,
     );
-    _databaseService.addItemToShopingList(item);
+    databaseService.addItemToShopingList(item);
+    loadListItem();
     setState(() {});
+  }
+
+  void loadListItem() {
+    shopingListController.getShopingListItemCompleted();
+    shopingListController.getShopingListItemInProgress();
   }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    loadListItem();
   }
 
   @override
@@ -46,58 +57,59 @@ class _AddShopingItemState extends State<AddShopingItem>
   }
 
   Widget listOfItem(bool isCompletedList) {
-    return FutureBuilder(
-      future: _databaseService.getShopingListItem(
-        widget.shopingList.id ?? 0,
-        isCompletedList,
-      ),
-      builder: (context, snapShot) {
-        return ListView.builder(
-          itemCount: (snapShot.data?.length ?? 0) + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              if (isCompletedList) {
-                return SizedBox();
-              }
-              return ListTile(
-                title: TextField(
-                  controller: itemName,
-                  textInputAction: TextInputAction.go,
-                  onSubmitted: (value) {
-                    _addShopingItem(value);
-                    itemName?.text = "";
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Enter your item name",
-                  ),
-                ),
-              );
+    return Obx(() {
+      var completedList = shopingListController.completedShopingListItem.value;
+      var inprogressList =
+          shopingListController.inprogressShopingListItem.value;
+      return ListView.builder(
+        itemCount:
+            ((isCompletedList ? completedList : inprogressList)?.length ?? 0) +
+            1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            if (isCompletedList) {
+              return SizedBox();
             }
-            ShoppingListItemModel item = snapShot.data![index - 1];
             return ListTile(
-              title: Text(item.name ?? "Nice "),
-              subtitle:
-                  item.quantity != null
-                      ? Text(
-                        "Quantity: ${item.quantity?.toString()} / Price: ${item.price}",
-                      )
-                      : null,
-              trailing: openPopUpMenu(item),
-              leading: Checkbox(
-                value: item.status == 1,
-                onChanged: (val) {
-                  _databaseService.completeShopingListItem(
-                    item,
-                    val == true ? 1 : 0,
-                  );
-                  setState(() {});
+              title: TextField(
+                controller: itemName,
+                textInputAction: TextInputAction.go,
+                onSubmitted: (value) {
+                  _addShopingItem(value);
+                  itemName?.text = "";
                 },
+                decoration: InputDecoration(labelText: "Enter your item name"),
               ),
             );
-          },
-        );
-      },
-    );
+          }
+          ShoppingListItemModel? item =
+              isCompletedList
+                  ? completedList![index - 1]
+                  : inprogressList![index - 1];
+          return ListTile(
+            title: Text(item?.name ?? "Nice "),
+            subtitle:
+                item?.quantity != null
+                    ? Text(
+                      "Quantity: ${item?.quantity?.toString()} / Price: ${item?.price}",
+                    )
+                    : null,
+            trailing: openPopUpMenu(item),
+            leading: Checkbox(
+              value: item?.status == 1,
+              onChanged: (val) {
+                databaseService.completeShopingListItem(
+                  item!,
+                  val == true ? 1 : 0,
+                );
+                loadListItem();
+                setState(() {});
+              },
+            ),
+          );
+        },
+      );
+    });
   }
 
   Widget openPopUpMenu(ShoppingListItemModel? item) {
@@ -121,9 +133,11 @@ class _AddShopingItemState extends State<AddShopingItem>
         }
         if (val == "delete") {
           if (item != null) {
-            _databaseService.deleteItem(item.id ?? 0);
+            databaseService.deleteItem(item.id ?? 0);
+            loadListItem();
           } else {
-            _databaseService.deleteShopList(widget.shopingList.id ?? 0);
+            databaseService.deleteShopList(widget.shopingList.id ?? 0);
+            loadListItem();
             Navigator.of(context).pop();
           }
           setState(() {});
@@ -169,6 +183,9 @@ class _AddShopingItemState extends State<AddShopingItem>
         ],
         bottom: TabBar(
           controller: _tabController,
+          onTap: (index) {
+            if (index == 1) {}
+          },
           tabs: const <Widget>[
             Tab(icon: Icon(Icons.check)),
             Tab(icon: Icon(Icons.check_circle_outline)),

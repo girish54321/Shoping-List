@@ -1,56 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:local_app/Helper/PullToLoadList.dart';
 import 'package:local_app/app/AddShopingItem/AddShopingItemScreen.dart';
 import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
-import 'package:local_app/DataBase/shop-list-database.dart';
 import 'package:local_app/Helper/helper.dart';
+import 'package:local_app/app/getx/ShopingListController.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
+import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 class ShopingList extends StatefulWidget {
+  final List<ShoppingListModel?>? shoppingList;
   final bool isCompleted;
-  const ShopingList({super.key, required this.isCompleted});
+  const ShopingList({super.key, required this.isCompleted, this.shoppingList});
 
   @override
   State<ShopingList> createState() => _ShopingListState();
 }
 
 class _ShopingListState extends State<ShopingList> {
-  final DatabaseService _databaseService = DatabaseService.databaseService;
+  final ShopingListController shopingListController = Get.find();
+
+  //* Reload  List
+  RefreshController refreshController = RefreshController(
+    initialRefresh: false,
+  );
+
+  void startReload() {
+    shopingListController.loadCompletedShopingList();
+    shopingListController.loadInProgressShopingList();
+    refreshController.footerMode?.value = LoadStatus.idle;
+    refreshController.refreshCompleted();
+  }
 
   Widget listOfTasks() {
-    return FutureBuilder(
-      future: _databaseService.getShopingList(widget.isCompleted),
-      builder: (context, snapShot) {
-        if (snapShot.data?.isEmpty ?? false) {
-          return Center(
-            child: Text(
-              !widget.isCompleted
-                  ? "You Past shoping list will show here"
-                  : "Create your shoping List",
-              style: TextStyle(fontSize: 22),
+    return PullToLoadList(
+      refreshController: refreshController,
+      onLoading: () => {},
+      onRefresh: startReload,
+      child: ListView.builder(
+        itemCount: widget.shoppingList?.length ?? 0,
+        itemBuilder: (context, index) {
+          ShoppingListModel task = widget.shoppingList![index]!;
+          return ListTile(
+            leading: Icon(
+              Icons.checklist_rounded,
+              color: widget.isCompleted ? Colors.green : Colors.orange,
             ),
+            onTap: () {
+              shopingListController.selecteShopListID(task.id ?? 0);
+              Helper().goToPage(
+                context: context,
+                child: AddShopingItem(shopingList: task),
+              );
+            },
+            title: Text(task.title ?? ""),
+            subtitle: Text(task.description ?? ""),
           );
-        }
-        return ListView.builder(
-          itemCount: snapShot.data?.length ?? 0,
-          itemBuilder: (context, index) {
-            ShoppingListModel task = snapShot.data![index];
-            return ListTile(
-              leading: Icon(
-                Icons.checklist_rounded,
-                color: !widget.isCompleted ? Colors.green : Colors.orange,
-              ),
-              onTap: () {
-                Helper().goToPage(
-                  context: context,
-                  child: AddShopingItem(shopingList: task),
-                );
-              },
-              title: Text(task.title ?? ""),
-              subtitle: Text(task.description ?? ""),
-            );
-          },
-        );
-      },
+        },
+      ),
     );
   }
 
