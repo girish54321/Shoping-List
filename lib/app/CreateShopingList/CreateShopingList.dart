@@ -112,9 +112,9 @@ class _CreateshopinglistState extends State<Createshopinglist> {
                 createList();
               }
             },
-            child: const Center(
+            child: Center(
               child: Text(
-                "Create",
+                widget.updateItem != null ? "Update" : "Create",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),

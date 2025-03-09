@@ -151,7 +151,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                   },
                                   child: Center(
                                     child: Text(
-                                      "Add Item",
+                                      widget.shopListItem != null
+                                          ? "Update Item"
+                                          : "Add Item",
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
