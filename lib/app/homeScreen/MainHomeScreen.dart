@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/state_manager.dart';
+import 'package:local_app/Helper/helper.dart';
+import 'package:local_app/app/SettingsScreen/SettingsScreen.dart';
 import 'package:local_app/app/ShopingList/ShopingList.dart';
 import 'package:local_app/app/getx/ShopingListController.dart';
 
@@ -21,10 +23,19 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
     });
   }
 
+  void goToSettings() {
+    Helper().goToPage(context: context, child: SettingsScreen());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Shoping List')),
+      appBar: AppBar(
+        title: const Text('Shoping List'),
+        actions: [
+          IconButton(onPressed: goToSettings, icon: Icon(Icons.settings)),
+        ],
+      ),
       body:
           _selectedIndex == 0
               ? Obx(

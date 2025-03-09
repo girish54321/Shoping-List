@@ -3,6 +3,7 @@ import 'package:get/get_instance/src/get_instance.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:local_app/app/HomeScreen/MainHomeScreen.dart';
+import 'package:local_app/app/getx/SettingController.dart';
 import 'package:local_app/app/getx/ShopingListController.dart';
 
 void main() {
@@ -20,10 +21,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     GetInstance().put<ShopingListController>(ShopingListController());
+    GetInstance().put<SettingController>(SettingController());
     return GetMaterialApp(
-      title: 'Flutter Demo',
       darkTheme: ThemeData(brightness: Brightness.dark),
-      theme: ThemeData(brightness: Brightness.dark),
+      title: 'Flutter Demo',
       getPages: [
         GetPage(
           name: '/',

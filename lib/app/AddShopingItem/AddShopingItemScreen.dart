@@ -40,6 +40,8 @@ class _AddShopingItemState extends State<AddShopingItem>
   void loadListItem() {
     shopingListController.getShopingListItemCompleted();
     shopingListController.getShopingListItemInProgress();
+    shopingListController.loadCompletedShopingList();
+    shopingListController.loadInProgressShopingList();
   }
 
   @override
