@@ -25,12 +25,14 @@ class ShopingListController extends GetxController {
   Future<void> loadCompletedShopingList() async {
     var data = await _databaseService.getShopingList(true);
     completedShopingList.value = data;
+    completedShopingList.refresh();
   }
 
   //* Load the inprogress shoping list list
   Future<void> loadInProgressShopingList() async {
     var data = await _databaseService.getShopingList(false);
     inprogressShopingList.value = data;
+    completedShopingList.refresh();
   }
 
   //* Load the shoping list item list for a selected shop list

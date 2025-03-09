@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:local_app/DataBase/shop-list-database.dart';
 import 'package:local_app/Helper/buttons.dart';
 import 'package:local_app/Helper/appInputText.dart';
+import 'package:local_app/app/getx/ShopingListController.dart';
 import 'package:local_app/modal/ShopingListModal.dart';
 
 class Createshopinglist extends StatefulWidget {
@@ -15,8 +17,14 @@ class Createshopinglist extends StatefulWidget {
 class _CreateshopinglistState extends State<Createshopinglist> {
   TextEditingController nameController = TextEditingController();
   TextEditingController infoController = TextEditingController();
+  final ShopingListController shopingListController = Get.find();
 
   final DatabaseService _databaseService = DatabaseService.databaseService;
+
+  void updateShopingListState() {
+    shopingListController.loadCompletedShopingList();
+    shopingListController.loadInProgressShopingList();
+  }
 
   void createList() async {
     if (nameController.text.isEmpty || infoController.text.isEmpty) {
@@ -34,6 +42,7 @@ class _CreateshopinglistState extends State<Createshopinglist> {
     infoController.clear();
 
     Navigator.of(context).pop();
+    updateShopingListState();
   }
 
   void updateShopingList() async {
@@ -56,6 +65,7 @@ class _CreateshopinglistState extends State<Createshopinglist> {
     infoController.clear();
 
     Navigator.of(context).pop();
+    updateShopingListState();
   }
 
   @override
