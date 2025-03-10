@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:local_app/app/ShopingList/ShopingList.dart';
+import 'package:local_app/app/shoping_list/shoping_list.dart';
 
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});

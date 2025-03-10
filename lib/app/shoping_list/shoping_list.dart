@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:local_app/app/AddShopingItem/AddShopingItemScreen.dart';
-import 'package:local_app/app/CreateShopingList/CreateShopingList.dart';
-import 'package:local_app/DataBase/shop-list-database.dart';
+import 'package:local_app/app/add_shoping_item/add_shoping_items_screen.dart';
 import 'package:local_app/Helper/helper.dart';
-import 'package:local_app/modal/ShopingListModal.dart';
+import 'package:local_app/app/create_shoping_list/create_shoping_items.dart';
+import 'package:local_app/dataBase/shop_list_database.dart';
+import 'package:local_app/modal/shoping_list_modal.dart';
 
 class ShopingList extends StatefulWidget {
   final bool isCompleted;

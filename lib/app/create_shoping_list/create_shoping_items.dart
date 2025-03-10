@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:local_app/DataBase/shop-list-database.dart';
 import 'package:local_app/Helper/buttons.dart';
-import 'package:local_app/Helper/appInputText.dart';
-import 'package:local_app/modal/ShopingListModal.dart';
+import 'package:local_app/dataBase/shop_list_database.dart';
+import 'package:local_app/helper/app_input_text.dart';
+import 'package:local_app/modal/shoping_list_modal.dart';
 
 class Createshopinglist extends StatefulWidget {
   final ShoppingListModel? updateItem;

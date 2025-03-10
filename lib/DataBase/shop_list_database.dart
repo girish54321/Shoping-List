@@ -1,5 +1,5 @@
 import 'package:local_app/DataBase/config.dart';
-import 'package:local_app/modal/ShopingListModal.dart';
+import 'package:local_app/modal/shoping_list_modal.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
